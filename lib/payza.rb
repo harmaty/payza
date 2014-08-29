@@ -29,6 +29,7 @@ class Payza
   def parse_response(input)
     @response = Rack::Utils.parse_nested_query(input)
     if @response["RETURNCODE"] == "100"
+      @response
     else
       raise PayzaApiError, @response['DESCRIPTION']
     end
