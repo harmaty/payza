@@ -11,6 +11,11 @@ class Payza
     @api_secret = api_secret
   end
 
+  def get_balance
+    response = api_call({}, 'GetBalance')
+    response['AVAILABLEBALANCE_1'].to_f
+  end
+
   def api_call(data, method)
     data.merge!({"USER" => @account, "PASSWORD" => @api_secret})
     query = {}
@@ -22,7 +27,14 @@ class Payza
   end
 
   def parse_response(input)
-    @response_array = Rack::Utils.parse_nested_query(input)
+    @response = Rack::Utils.parse_nested_query(input)
+    if @response["RETURNCODE"] == "100"
+    else
+      raise PayzaApiError, @response['DESCRIPTION']
+    end
   end
+end
+
+class PayzaApiError < StandardError
 end
 
