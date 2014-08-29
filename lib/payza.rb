@@ -2,29 +2,27 @@ module Payza
 
   class Payza
 
-    def initialize(sandbox = false)
-      type = sandbox ? "sandbox" : "live"
-      config = YAML.load_file("#{Rails.root}/config/payza.yml") rescue nil
-      if config
-        @url = config[type]["url"]
-        @myUserName = config[type]["user"]
-        @apiPassword = config[type]["pass"]
-      end
+    SANDBOX_URL = 'https://sandbox.payza.com/api/api.svc/'
+    API_URL = 'https://api.payza.com/svc/api.svc/'
+
+    def initialize(account, api_secret, sandbox = false)
+      @url = sandbox ? SANDBOX_URL : API_URL
+      @account = account
+      @api_secret = api_secret
     end
 
-    def call_payza(data, method)
-      data.merge!({"USER" => @myUserName, "PASSWORD" => @apiPassword})
-      qs = {}
+    def api_call(data, method)
+      data.merge!({"USER" => @account, "PASSWORD" => @api_secret})
+      query = {}
       data.each do |key, value|
-        qs[key.to_s.upcase] = URI.escape(value.to_s)
+        query[key.to_s.upcase] = URI.escape(value.to_s)
       end
 
-      options = {:body => qs}
-      parseResponse HTTParty.post(@url+method, options)
+      parse_response HTTParty.post(@url + method, body: query)
     end
 
-    def parseResponse(input)
-      @responseArray = Rack::Utils.parse_nested_query(input)
+    def parse_response(input)
+      @response_array = Rack::Utils.parse_nested_query(input)
     end
   end
 
