@@ -16,6 +16,18 @@ class Payza
     response['AVAILABLEBALANCE_1'].to_f
   end
 
+  def send_money(options)
+    data = {
+        currency: options[:currency],
+        amount: options[:amount],
+        receiveremail: options[:receiver_email],
+        purchasetype: options[:type] || 0,
+        note: options[:note],
+        testmode: options[:test_mode] || 0
+    }
+    api_call(data, 'sendmoney')
+  end
+
   def api_call(data, method)
     data.merge!({"USER" => @account, "PASSWORD" => @api_secret})
     query = {}
