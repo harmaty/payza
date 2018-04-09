@@ -2,8 +2,8 @@ require 'httparty'
 
 class Payza
 
-  SANDBOX_URL = 'https://sandbox.payza.com/api/api.svc/'
-  API_URL = 'https://api.payza.com/svc/api.svc/'
+  SANDBOX_URL = 'https://sandbox.payza.eu/api/api.svc/'
+  API_URL = 'https://api.payza.eu/svc/api.svc/'
 
   def initialize(account, api_secret, sandbox = false)
     @url = sandbox ? SANDBOX_URL : API_URL
